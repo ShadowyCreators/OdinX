@@ -6,7 +6,6 @@ import { useWalletStore } from '../stores/walletStore';
 import SwapStatusCard from './SwapStatusCard.vue';
 
 const walletStore = useWalletStore();
-console.log('CreateUserHTLC walletStore', walletStore.getOdinTrade());
 const useSdkService = new SdkService(walletStore.getOdinTrade());
 
 const props = defineProps<{

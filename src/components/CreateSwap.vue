@@ -6,7 +6,6 @@ import { useWalletStore } from '../stores/walletStore';
 import { formatBitcoinBalance } from '../utils/formatBalances';
 
 const walletStore = useWalletStore();
-console.log('CreateSwap walletStore', walletStore.getOdinTrade());
 const useSdkService = new SdkService(walletStore.getOdinTrade());
 const errorMessage = ref('');
 
