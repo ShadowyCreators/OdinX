@@ -8,6 +8,4 @@ const schema = z.object({
 
 const validatedENV = schema.parse(import.meta.env);
 
-console.log(validatedENV);
-
 export { validatedENV };

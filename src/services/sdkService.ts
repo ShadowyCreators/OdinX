@@ -13,9 +13,7 @@ interface CreateSwapFrontendRequest {
 export class SdkService {
   private readonly odinTradeSdk: OdinTradeSdk;
   constructor(odinTradeSdk: OdinTradeSdk) {
-    console.log('odinTradeSdk', odinTradeSdk);
     this.odinTradeSdk = odinTradeSdk;
-    console.log('odinTradeSdk', this.odinTradeSdk);
   }
 
   async getTokenSwapDetails(request: GetTokenSwapDetailsRequest) {

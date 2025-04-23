@@ -1,14 +1,15 @@
 import { OdinTradeSdk, WindowProviderEvmSigner, XverseBitcoinSigner } from '@odinxorg/sdk';
-import 'dotenv/config';
 import { defineStore } from 'pinia';
 import { validatedENV } from '../validatedEnv';
 
 let evmSigner = new WindowProviderEvmSigner();
 let btcSigner = new XverseBitcoinSigner();
+const walletPartnerId = '<wallet-partner-id>'
 let odinTrade = new OdinTradeSdk({
   ethereumSigner: evmSigner,
   bitcoinSigner: btcSigner,
   url: validatedENV.VITE_BACKEND_URL,
+  walletPartnerId
 });
 
 export const useWalletStore = defineStore('walletStore', {
@@ -33,7 +34,7 @@ export const useWalletStore = defineStore('walletStore', {
         bitcoinSigner: btcSigner,
         ethereumSigner: evmSigner,
         url: validatedENV.VITE_BACKEND_URL,
-        walletPartnerId: '<wallet-partner-id>',
+        walletPartnerId: walletPartnerId,
       });
       this.initialized = true;
       console.log('....odinTrade', odinTrade, process.env.VITE_BACKEND_URL);
@@ -78,18 +79,18 @@ export const useWalletStore = defineStore('walletStore', {
       }
     },
 
-    // resetWallets() {
-    //   evmSigner = new WindowProviderEvmSigner();
-    //   btcSigner = new XverseBitcoinSigner();
-    //   odinTrade = new OdinTradeSdk({
-    //     url: validatedENV.VITE_BACKEND_URL,
-    //   });
-
-    //   this.connected = false;
-    //   this.evmAddress = '';
-    //   this.btcAddress = '';
-    //   this.initialized = true;
-    //   console.log('[walletStore] Wallets reset');
-    // },
+    resetWallets() {
+      evmSigner = new WindowProviderEvmSigner();
+      btcSigner = new XverseBitcoinSigner();
+      odinTrade = new OdinTradeSdk({
+        url: validatedENV.VITE_BACKEND_URL,
+      });
+      localStorage.clear();
+      this.connected = false;
+      this.evmAddress = '';
+      this.btcAddress = '';
+      this.initialized = true;
+      console.log('[walletStore] Wallets reset');
+    },
   },
 });

@@ -30,3 +30,5 @@ coverage
 *.tsbuildinfo
 .env
 .npmrc
+.env.development
+.env.production

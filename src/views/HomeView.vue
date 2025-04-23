@@ -28,7 +28,9 @@ const swapFrom = ref<Chains>(Chains.ETHEREUM);
 
 const fetchSwapStatus = async () => {
   try {
-    console.log('fetchSwapStatus');
+    if (!walletStore.evmAddress || !walletStore.btcAddress) {
+      return;
+    }
     const addressIn =
       swapFrom.value === Chains.BITCOIN ? await walletStore.getBtcSigner().getAddress() : await walletStore.getEvmSigner().getAddress();
     if (!addressIn) return;
@@ -42,7 +44,7 @@ const fetchSwapStatus = async () => {
     currentSwap.value = orderHistory[0]; // is the most recent swap
     if (
       !currentSwap.value ||
-      currentSwap.value.status === SwapStatus.BROKER_CLAIM_PENDING ||
+      currentSwap.value.status === SwapStatus.CREATED ||
       currentSwap.value.status === SwapStatus.BROKER_CLAIM_COMPLETED ||
       currentSwap.value.status === SwapStatus.FAILED ||
       currentSwap.value.status === SwapStatus.USER_CLAIM_PENDING ||
@@ -93,13 +95,12 @@ const fetchSwapStatus = async () => {
 };
 
 onMounted(async () => {
-  if (walletStore.attemptedToConnect) {
     await walletStore.connectWallets();
-  }
+  
   await fetchSwapStatus();
   setInterval(async () => {
     await fetchSwapStatus();
-  }, 500);
+  }, 5000);
 });
 
 const closeClaimUserModal = () => {
@@ -111,12 +112,20 @@ const closeClaimUserModal = () => {
 <template>
   <div class="max-h-full p-8">
     <div class="mb-4">
+      <p v-if="!walletStore.evmAddress || !walletStore.btcAddress" class="text-gray-300">
+          <span class="text-red-500">⚠️</span> Wallets not connected 
+          <button class="btn btn-primary ml-3" @click="walletStore.connectWallets()">Connect Wallets</button>
+      </p>
       <p class="text-green-500" v-if="walletStore.connected">
         ✅ Wallets connected: <br />
-        Bitcoin: {{ walletStore.btcAddress }} <br />
-        Ethereum: {{ walletStore.evmAddress }}
+        
+        <span >
+          Bitcoin: {{ walletStore.btcAddress }} <br />
+          Ethereum: {{ walletStore.evmAddress }}
+        </span>
+        <button class="btn btn-primary ml-3" @click="walletStore.resetWallets()">Disconnect Wallets</button>
       </p>
-      <p class="text-red-500" v-else>⚠️ Wallets not connected</p>
+
     </div>
 
     <div class="flex justify-center items-center gap-4 mb-8">
