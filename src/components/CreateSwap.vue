@@ -23,8 +23,8 @@ const swapUserInput = ref<GetTokenSwapDetailsRequest>({
   tokenOutSymbol: props.chainIn === Chains.ETHEREUM ? 'BTC' : 'ETH',
   chainIn: props.chainIn,
   chainOut: props.chainIn === Chains.ETHEREUM ? Chains.BITCOIN : Chains.ETHEREUM,
-  addressIn: walletStore.evmAddress,
-  addressOut: walletStore.btcAddress,
+  addressIn: walletStore.evmAddress || '',
+  addressOut: walletStore.btcAddress || '',
 });
 
 const createSwapResponse = ref<CreateSwapResponse>();
@@ -43,8 +43,8 @@ const allTokens = {
 onMounted(async () => {
   swapUserInput.value.chainIn = props.chainIn;
   swapUserInput.value.chainOut = swapUserInput.value.chainIn === Chains.BITCOIN ? Chains.ETHEREUM : Chains.BITCOIN;
-  swapUserInput.value.addressIn = swapUserInput.value.chainIn === Chains.BITCOIN ? walletStore.btcAddress : walletStore.evmAddress;
-  swapUserInput.value.addressOut = swapUserInput.value.chainOut === Chains.BITCOIN ? walletStore.btcAddress : walletStore.evmAddress;
+  swapUserInput.value.addressIn = swapUserInput.value.chainIn === Chains.BITCOIN ? walletStore.btcAddress || '' : walletStore.evmAddress || '';
+  swapUserInput.value.addressOut = swapUserInput.value.chainOut === Chains.BITCOIN ? walletStore.btcAddress || '' : walletStore.evmAddress || ''  ;
   swapUserInput.value.amountIn = 0;
 
   await getMaxAmountIn();
@@ -56,8 +56,8 @@ const tokenOutOptions = computed(() => allTokens[swapUserInput.value.chainOut] |
 
 const onChainInChange = async () => {
   swapUserInput.value.chainOut = swapUserInput.value.chainIn === Chains.BITCOIN ? Chains.ETHEREUM : Chains.BITCOIN;
-  swapUserInput.value.addressIn = swapUserInput.value.chainIn === Chains.BITCOIN ? walletStore.btcAddress : walletStore.evmAddress;
-  swapUserInput.value.addressOut = swapUserInput.value.chainOut === Chains.BITCOIN ? walletStore.btcAddress : walletStore.evmAddress;
+  swapUserInput.value.addressIn = swapUserInput.value.chainIn === Chains.BITCOIN ? walletStore.btcAddress || '' : walletStore.evmAddress || '';
+  swapUserInput.value.addressOut = swapUserInput.value.chainOut === Chains.BITCOIN ? walletStore.btcAddress || '' : walletStore.evmAddress || '';
   swapUserInput.value.tokenInSymbol = tokenInOptions.value[0];
   swapUserInput.value.tokenOutSymbol = tokenOutOptions.value[0];
   swapUserInput.value.amountIn = 0;
@@ -68,8 +68,8 @@ const onChainInChange = async () => {
 
 const onChainOutChange = async () => {
   swapUserInput.value.chainIn = swapUserInput.value.chainOut === Chains.BITCOIN ? Chains.ETHEREUM : Chains.BITCOIN;
-  swapUserInput.value.addressOut = swapUserInput.value.chainOut === Chains.BITCOIN ? walletStore.btcAddress : walletStore.evmAddress;
-  swapUserInput.value.addressIn = swapUserInput.value.chainIn === Chains.BITCOIN ? walletStore.btcAddress : walletStore.evmAddress;
+  swapUserInput.value.addressOut = swapUserInput.value.chainOut === Chains.BITCOIN ? walletStore.btcAddress || '' : walletStore.evmAddress || '';
+  swapUserInput.value.addressIn = swapUserInput.value.chainIn === Chains.BITCOIN ? walletStore.btcAddress || '' : walletStore.evmAddress || '';
   swapUserInput.value.tokenOutSymbol = tokenOutOptions.value[0];
   swapUserInput.value.tokenInSymbol = tokenInOptions.value[0];
   swapUserInput.value.amountIn = 0;
@@ -99,6 +99,7 @@ const isCreateSwapButtonDisabled = computed(() => {
     swapUserInput.value.amountIn > maxAmountIn.value ||
     !swapDetails.value ||
     isLoading.value ||
+    swapDetails.value?.amountOut === 0 ||
     isCreationRequestCompleted.value
   );
 });

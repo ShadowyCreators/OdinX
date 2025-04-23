@@ -2,12 +2,12 @@ import { OdinTradeSdk, WindowProviderEvmSigner, XverseBitcoinSigner } from '@odi
 import { defineStore } from 'pinia';
 import { validatedENV } from '../validatedEnv';
 
-let evmSigner = new WindowProviderEvmSigner();
-let btcSigner = new XverseBitcoinSigner();
+let evmSigner = window.ethereum ? new WindowProviderEvmSigner() : null;
+let btcSigner = new XverseBitcoinSigner() ? new XverseBitcoinSigner() : null  ;
 const walletPartnerId = '<wallet-partner-id>'
 let odinTrade = new OdinTradeSdk({
-  ethereumSigner: evmSigner,
-  bitcoinSigner: btcSigner,
+  ethereumSigner: evmSigner || undefined,
+  bitcoinSigner: btcSigner || undefined,
   url: validatedENV.VITE_BACKEND_URL,
   walletPartnerId
 });
@@ -15,8 +15,8 @@ let odinTrade = new OdinTradeSdk({
 export const useWalletStore = defineStore('walletStore', {
   state: () => ({
     connected: false,
-    evmAddress: '',
-    btcAddress: '',
+    evmAddress: '' as string | undefined,
+    btcAddress: '' as string | undefined,
     odinTrade: odinTrade,
     initialized: false,
     attemptedToConnect: false,
@@ -52,14 +52,17 @@ export const useWalletStore = defineStore('walletStore', {
     async connectWallets() {
       try {
         this.init();
+        if (!evmSigner || !btcSigner || !window.ethereum ) {
+          throw new Error('Signers not initialized');
+        }
         this.attemptedToConnect = true;
         console.log('Connecting wallets...');
-        await evmSigner.connect();
-        await btcSigner.connect();
+        await evmSigner?.connect();
+        await btcSigner?.connect();
 
-        this.evmAddress = await evmSigner.getAddress();
+        this.evmAddress = await evmSigner?.getAddress();
         console.log('EVM Address:', this.evmAddress);
-        this.btcAddress = await btcSigner.getAddress();
+        this.btcAddress = await btcSigner?.getAddress();
         console.log('BTC Address:', this.btcAddress);
 
         this.connected = !!this.evmAddress && !!this.btcAddress;
@@ -74,8 +77,8 @@ export const useWalletStore = defineStore('walletStore', {
       if (!this.connected) {
         await this.connectWallets();
       } else {
-        this.evmAddress = await evmSigner.getAddress();
-        this.btcAddress = await btcSigner.getAddress();
+        this.evmAddress = await evmSigner?.getAddress();
+        this.btcAddress = await btcSigner?.getAddress();
       }
     },
 

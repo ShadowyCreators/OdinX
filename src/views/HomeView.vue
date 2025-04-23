@@ -32,7 +32,7 @@ const fetchSwapStatus = async () => {
       return;
     }
     const addressIn =
-      swapFrom.value === Chains.BITCOIN ? await walletStore.getBtcSigner().getAddress() : await walletStore.getEvmSigner().getAddress();
+      swapFrom.value === Chains.BITCOIN ? await walletStore.getBtcSigner()?.getAddress() : await walletStore.getEvmSigner()?.getAddress();
     if (!addressIn) return;
     const orderHistory = await useSdkService.getAllSwapsHistory(addressIn);
     if (orderHistory.length === 0) {
