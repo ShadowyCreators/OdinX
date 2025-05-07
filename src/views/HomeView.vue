@@ -138,8 +138,8 @@ const closeClaimUserModal = () => {
             swapFrom = swapFrom === Chains.BITCOIN ? ((tabSelected = null), Chains.ETHEREUM) : ((tabSelected = null), Chains.BITCOIN)
           "
         />
-        <div class="swap-on text-orange-400">Ethereum</div>
-        <div class="swap-off text-cyan-400">Bitcoin</div>
+        <div class="swap-on text-cyan-400 ">Ethereum</div>
+        <div class="swap-off text-orange-400 ">Bitcoin</div>
       </label>
     </div>
 
